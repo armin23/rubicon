@@ -24,37 +24,59 @@ namespace RubiconTest.Controllers
 
         // GET: api/BlogPosts
         [HttpGet]
-        public IEnumerable<BlogPostResponse> GetBlogPosts()
+        public BlogPostListResponse GetBlogPosts()
         {
-            return _context.BlogPosts
+            var blogs = _context.BlogPosts
                            .Include(bp => bp.BlogPostTags)
                                 .ThenInclude(t => t.Tag)
                            .Select(bp => new BlogPostResponse
-                                {
-                                    Body = bp.Body,
-                                    ID = bp.ID,
-                                    Description = bp.Description,
-                                    Slug = bp.Slug,
-                                    Title = bp.Title,
-                                    CreatedAt = bp.CreatedAt,
-                                    UpdatedAt = bp.UpdatedAt,
-                                    BlogPostTags = bp.BlogPostTags
+                           {
+                               Body = bp.Body,
+                               Description = bp.Description,
+                               Slug = bp.Slug,
+                               Title = bp.Title,
+                               CreatedAt = bp.CreatedAt,
+                               UpdatedAt = bp.UpdatedAt,
+                               BlogPostTags = bp.BlogPostTags
                                                      .Select(bpt => bpt.Tag.Name)
                                                      .ToList()
 
-                                }).ToList();
+                           }).ToList();
+            var blogsCount = blogs.Count;
+            return new BlogPostListResponse
+            {
+                PostsCount = blogsCount,
+                BlogPosts = blogs
+            };
         }
 
         // GET: api/BlogPosts/5
         [HttpGet("{id}")]
+
         public async Task<IActionResult> GetBlogPost([FromRoute] int id)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
 
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+
+            var blogPost = await _context.BlogPosts
+
+                           .Include(bp => bp.BlogPostTags)
+                                .ThenInclude(t => t.Tag)
+                            .Where(bp => bp.ID == id)
+                           .Select(bp => new BlogPostResponse
+                           {
+                               Body = bp.Body,
+                               Description = bp.Description,
+                               Slug = bp.Slug,
+                               Title = bp.Title,
+                               CreatedAt = bp.CreatedAt,
+                               UpdatedAt = bp.UpdatedAt,
+                               BlogPostTags = bp.BlogPostTags
+                                                     .Select(bpt => bpt.Tag.Name)
+                                                     .ToList()
+                           })
+                           .SingleOrDefaultAsync();
+
+
 
             if (blogPost == null)
             {
@@ -63,6 +85,7 @@ namespace RubiconTest.Controllers
 
             return Ok(blogPost);
         }
+
 
         // PUT: api/BlogPosts/5
         [HttpPut("{id}")]
