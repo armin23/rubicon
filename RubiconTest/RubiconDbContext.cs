@@ -16,6 +16,7 @@ namespace RubiconTest
 
         public DbSet<BlogPost> BlogPosts { get; set; }
         public DbSet<Tag> Tags { get; set; }
+        public DbSet<BlogPostTag> BlogPostTags { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -27,10 +28,14 @@ namespace RubiconTest
                 .WithMany(b => b.BlogPostTags)
                 .HasForeignKey(bc => bc.BlogPostId);
 
+            modelBuilder.Entity<BlogPostTag>().ToTable("BlogPostTag");
+
             modelBuilder.Entity<BlogPostTag>()
                 .HasOne(bc => bc.Tag)
                 .WithMany(c => c.BlogPostTags)
                 .HasForeignKey(bc => bc.TagId);
+
+            
         }
 
     }
