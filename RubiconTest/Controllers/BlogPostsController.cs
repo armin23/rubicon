@@ -22,8 +22,7 @@ namespace RubiconTest.Controllers
         {
             _context = context;
         }
-
-        // GET: api/BlogPosts
+        
         [HttpGet]
         public BlogPostListResponse GetBlogPosts([FromQuery] string tag)
         {
@@ -62,19 +61,15 @@ namespace RubiconTest.Controllers
                 BlogPosts = blogs
             };
         }
-
-        // GET: api/BlogPosts/5
-        [HttpGet("{id}")]
-
-        public async Task<IActionResult> GetBlogPost([FromRoute] int id)
+        
+        [HttpGet("{slug}")]
+        public async Task<IActionResult> GetBlogPost([FromRoute] string slug)
         {
-
-
             var blogPost = await _context.BlogPosts
 
                            .Include(bp => bp.BlogPostTags)
                                 .ThenInclude(t => t.Tag)
-                            .Where(bp => bp.ID == id)
+                            .Where(bp => bp.Slug == slug)
                            .Select(bp => new BlogPostResponse
                            {
                                Body = bp.Body,
@@ -98,13 +93,11 @@ namespace RubiconTest.Controllers
 
             return Ok(blogPost);
         }
-
-
-        // PUT: api/BlogPosts/5
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBlogPost([FromRoute] int id, [FromBody] BlogPostRequest blogPost)
+        
+        [HttpPut("{slug}")]
+        public async Task<IActionResult> PutBlogPost([FromRoute] string slug, [FromBody] BlogPostRequest blogPost)
         {
-            var entity = _context.BlogPosts.Where(a => a.ID == id).FirstOrDefault();
+            var entity = _context.BlogPosts.Where(a => a.Slug == slug).FirstOrDefault();
 
             if (entity == null)
             {
@@ -129,7 +122,7 @@ namespace RubiconTest.Controllers
 
             if (blogPost.BlogPost.TagList != null)
             {
-                var oldTags = _context.BlogPostTags.Where(a => a.BlogPostId == id).ToList();
+                var oldTags = _context.BlogPostTags.Where(a => a.BlogPost.Slug == entity.Slug).ToList();
 
                 foreach (var item in oldTags.ToList())
                 {
@@ -151,7 +144,7 @@ namespace RubiconTest.Controllers
 
                     _context.BlogPostTags.Add(new BlogPostTag
                     {
-                        BlogPostId = id,
+                        BlogPostId = entity.ID,
                         TagId = tag.ID
                     });
                 }
@@ -165,20 +158,12 @@ namespace RubiconTest.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BlogPostExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest("Desila se greška");
             }
 
-            return await GetBlogPost(id);
+            return await GetBlogPost(entity.Slug);
         }
-
-        // POST: api/BlogPosts
+        
         [HttpPost]
         public async Task<IActionResult> PostBlogPost([FromBody] BlogPostRequest blogPost)
         {
@@ -219,24 +204,18 @@ namespace RubiconTest.Controllers
             _context.BlogPosts.Add(entity);
             await _context.SaveChangesAsync();
 
-            return await GetBlogPost(entity.ID);
+            return await GetBlogPost(entity.Slug);
         }
-
-        private static string GetSlug(BlogPostRequest blogPost)
-        {
-            return blogPost.BlogPost.Title.Replace(' ', '-').ToLower().Replace("\'", "").Replace("\"", "");
-        }
-
-        // DELETE: api/BlogPosts/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBlogPost([FromRoute] int id)
+        
+        [HttpDelete("{slug}")]
+        public async Task<IActionResult> DeleteBlogPost([FromRoute] string slug)
         {
             if (!ModelState.IsValid)
             {
                 return BadRequest(ModelState);
             }
 
-            var blogPost = await _context.BlogPosts.FindAsync(id);
+            var blogPost = _context.BlogPosts.Where(a => a.Slug == slug).FirstOrDefault();
             if (blogPost == null)
             {
                 return NotFound();
@@ -248,9 +227,15 @@ namespace RubiconTest.Controllers
             return Ok(blogPost);
         }
 
-        private bool BlogPostExists(int id)
+        private static string GetSlug(BlogPostRequest blogPost)
         {
-            return _context.BlogPosts.Any(e => e.ID == id);
+            return blogPost.BlogPost.Title
+                                    .Replace(' ', '-')
+                                    .Replace("?", "")
+                                    .Replace("&", "")
+                                    .Replace("\'", "")
+                                    .Replace("\"", "")
+                                    .ToLower();
         }
     }
 }
