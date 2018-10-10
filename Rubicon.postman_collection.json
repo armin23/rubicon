@@ -1,0 +1,189 @@
+{
+	"info": {
+		"_postman_id": "5ad5ec95-29f0-4167-b2de-2a3c451a078a",
+		"name": "Rubicon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Get all posts",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:5001/api/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete post ",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/posts/react-why-and-how",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts",
+						"react-why-and-how"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update post",
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"blogPost\": {\r\n    \"tagList\": [\"facebook\", \"instagram\"]\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/posts/react-why-and-how",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts",
+						"react-why-and-how"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create blog post",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"blogPost\": {\r\n    \"title\": \"Internet Trends 2017\",\r\n    \"description\": \"Ever wonder how?\",\r\n    \"body\": \"An opinionated commentary, of the most important presentation of the year\",\r\n    \"tagList\": [\"trends\", \"innovation\", \"2018\"]\r\n  }\r\n}"
+				},
+				"url": {
+					"raw": "https://localhost:5001/api/posts",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get one blog post",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:5001/api/posts/react-why-and-how",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts",
+						"react-why-and-how"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Filter tag",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:5001/api/posts?tag=facebook",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"posts"
+					],
+					"query": [
+						{
+							"key": "tag",
+							"value": "facebook"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get all tags ",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "https://localhost:5001/api/tags",
+					"protocol": "https",
+					"host": [
+						"localhost"
+					],
+					"port": "5001",
+					"path": [
+						"api",
+						"tags"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
